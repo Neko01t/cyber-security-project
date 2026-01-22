@@ -40,7 +40,6 @@ To deploy this project in a testing environment (preferably Kali Linux), follow 
 git clone [https://github.com/Neko01t/cyber-security-project](https://github.com/Neko01t/cyber-security-project)
 cd cyber-security-project
 ```
-````
 
 ### 2. Install Python Dependencies
 
@@ -145,3 +144,4 @@ This project addresses the following Major Project requirements:
 1.  **Create a code in Python for a Keylogger**.
 
 2.  **Create a malware using Metasploit and perform a static and dynamic analysis**.
+````
