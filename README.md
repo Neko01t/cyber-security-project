@@ -18,7 +18,7 @@ This repository contains the source code, payloads, and documentation for my Maj
 
 ## Project Structure
 
-````text
+```text
 .
 ├── keylogger.py        # Python script for kernel-level keylogging
 ├── keylog.txt          # Output file storing captured keystrokes
@@ -28,6 +28,7 @@ This repository contains the source code, payloads, and documentation for my Maj
 └── test.py             # Testing utility
 
 ```
+
 ---
 
 ## Installation & Setup
@@ -144,4 +145,7 @@ This project addresses the following Major Project requirements:
 1.  **Create a code in Python for a Keylogger**.
 
 2.  **Create a malware using Metasploit and perform a static and dynamic analysis**.
-````
+
+```
+
+```
