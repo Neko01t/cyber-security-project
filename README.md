@@ -27,6 +27,7 @@ This repository contains the source code, payloads, and documentation for my Maj
 ├── requirements.txt    # Python dependencies
 └── test.py             # Testing utility
 
+```
 ---
 
 ## Installation & Setup
@@ -38,7 +39,7 @@ To deploy this project in a testing environment (preferably Kali Linux), follow 
 ```bash
 git clone [https://github.com/Neko01t/cyber-security-project](https://github.com/Neko01t/cyber-security-project)
 cd cyber-security-project
-
+```
 ````
 
 ### 2. Install Python Dependencies
