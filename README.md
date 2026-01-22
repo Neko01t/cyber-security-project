@@ -5,9 +5,6 @@
 ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Educational-orange?style=for-the-badge)
 
-**Submitted by:** [Your Name]
-[cite_start]**Organization:** Adverk Technologies [cite: 1]
-
 This repository contains the source code, payloads, and documentation for my Major Project in Cyber Security. The project focuses on offensive security methodologies, specifically **Malware Creation/Analysis** and **Keylogging**, to demonstrate system vulnerabilities and the mechanics of user surveillance.
 
 > **DISCLAIMER: For Educational Purposes Only** > This code is intended for authorized security testing and educational contexts only. Misuse of this software to violate the law, invade privacy, or target systems without explicit permission is strictly prohibited.
