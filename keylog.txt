@@ -6,3 +6,9 @@
 --- Logging started 2026-01-22 15:06:15.769635 ---
 
 --- Logging started 2026-01-22 15:06:25.282221 ---
+
+--- Logging started at 2026-01-22 15:15:50.093014 ---
+OS: Linux, Display: Wayland
+asasasa
+asascascascaecaecae
+--- Logging stopped ---
