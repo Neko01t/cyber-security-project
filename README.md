@@ -1,5 +1,3 @@
-Here is the updated `README.md` file. I have removed all standard emojis and replaced them with modern Shields.io badges, which are the standard "icons" used in professional GitHub repositories to indicate status, languages, and tools.
-
 # Cyber Security Major Project
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
