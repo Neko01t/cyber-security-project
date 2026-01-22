@@ -20,3 +20,13 @@ KEY_RIGHT
 KEY_BACKSPACE
 KEY_LEFTCTRL
 KEY_C
+
+--- Started evdev logging on AT Translated Set 2 keyboard at 2026-01-22 15:37:03.153635 ---
+
+--- Started evdev logging on AT Translated Set 2 keyboard at 2026-01-22 15:37:39.625818 ---
+
+--- Started evdev logging on AT Translated Set 2 keyboard at 2026-01-22 15:38:03.040301 ---
+a[BSP][BSP][BSP][BSP][BSP]omo[BSP]sonawoae
+
+
+passwr[BSP]ord [EQUAL] tere
