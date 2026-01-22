@@ -1,14 +1,22 @@
+ 
 
---- Logging started 2026-01-22 14:59:20.968169 ---
-
---- Logging started 2026-01-22 15:00:57.913796 ---
-
---- Logging started 2026-01-22 15:06:15.769635 ---
-
---- Logging started 2026-01-22 15:06:25.282221 ---
-
---- Logging started at 2026-01-22 15:15:50.093014 ---
-OS: Linux, Display: Wayland
-asasasa
-asascascascaecaecae
---- Logging stopped ---
+--- Started evdev logging on AT Translated Set 2 keyboard at 2026-01-22 15:32:49.744656 ---
+KEY_O
+KEY_M
+KEY_S
+KEY_O
+KEY_N
+KEY_A
+KEY_W
+KEY_A
+KEY_O
+KEY_N
+KEY_E
+KEY_LEFTCTRL
+KEY_A
+KEY_BACKSPACE
+KEY_RIGHT
+KEY_RIGHT
+KEY_BACKSPACE
+KEY_LEFTCTRL
+KEY_C

