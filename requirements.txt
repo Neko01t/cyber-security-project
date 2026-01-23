@@ -1,4 +1,14 @@
+attrs==25.4.0
+capstone==5.0.6
 evdev==1.9.2
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+lznt1==0.2
+pefile==2024.8.26
+pycryptodome==3.23.0
 pynput==1.8.1
 python-xlib==0.33
+referencing==0.37.0
+rpds-py==0.30.0
 six==1.17.0
+unicorn==1.0.2
