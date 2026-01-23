@@ -1,9 +1,15 @@
 # Cyber Security Major Project
+<p align="center">
+  <img src="https://img.shields.io/badge/Python%203.12-3776AB?style=flat&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Linux%20|%20Windows-black?style=flat&logo=linux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cybersecurity-red?style=flat&logo=hackthebox&logoColor=white" />
+  <img src="https://img.shields.io/badge/Educational-orange?style=flat" />
+  <img src="https://img.shields.io/badge/Metasploit-0f172a?style=flat&logo=kali-linux&logoColor=white" />
+</p>
 
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Metasploit](https://img.shields.io/badge/Metasploit-Framework-333333?style=for-the-badge&logo=kali-linux&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-lightgrey?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Educational-orange?style=for-the-badge)
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=python,linux,windows,bash" />
+</p>
 
 This repository contains the source code, payloads, and documentation for my Major Project in Cyber Security. The project focuses on offensive security methodologies, specifically **Malware Creation/Analysis** and **Keylogging**, to demonstrate system vulnerabilities and the mechanics of user surveillance.
 
@@ -17,8 +23,6 @@ This repository contains the source code, payloads, and documentation for my Maj
 .
 ├── keylogger.py        # Python script for kernel-level keylogging
 ├── keylog.txt          # Output file storing captured keystrokes
-├── payload.elf         # Meterpreter payload for Linux (x86)
-├── payload.exe         # Meterpreter payload for Windows
 ├── requirements.txt    # Python dependencies
 └── test.py             # Testing utility
 
