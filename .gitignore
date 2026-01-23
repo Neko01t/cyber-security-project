@@ -5,6 +5,7 @@ __pycache__/
 *.pyo
 *.pyd
 *.log
-
+keylog.txt
+payload.*
 # OS
 .DS_Store
